@@ -2,6 +2,8 @@
 
 Collect independent proposals, cross critiques, votes, and a synthesis with explicit consensus and confidence.
 
+Proposals and critiques run concurrently. Set `consensus_threshold` to control when the result reports agreement; a split vote is marked as no consensus and synthesized with competing options.
+
 ## Quick start
 
 Requires Python 3.11 or newer. From this repository:
