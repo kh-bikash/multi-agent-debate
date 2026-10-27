@@ -9,6 +9,9 @@ description = "Independent proposals, critique, voting, and synthesis."
 requires-python = ">=3.11"
 dependencies = []
 
+[project.scripts]
+agent-debate = "multi_agent_debate.__main__:main"
+
 [project.optional-dependencies]
 dev = ["pytest>=8,<10", "ruff==0.17.3"]
 
