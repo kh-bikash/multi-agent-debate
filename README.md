@@ -37,6 +37,24 @@ print(result.answer, result.votes, result.consensus)
 
 ## Architecture
 
+```mermaid
+flowchart LR
+    Question[Question] --> Proposals[Parallel independent proposals]
+    Proposals --> Critiques[Parallel cross critiques]
+    Critiques --> Votes[Named votes]
+    Votes --> Consensus[Consensus calculation]
+    Consensus --> Synthesis[Aggregator synthesis]
+    Synthesis --> Result[Answer, votes, and confidence]
+    Consensus -->|Split vote| Disagreement[No consensus flag]
+    Disagreement --> Synthesis
+```
+
+| Component | Responsibility |
+|---|---|
+| Participants | Provide proposals, critiques, and one registered-name vote. |
+| Consensus policy | Uses a configurable threshold and deterministic tie break. |
+| Aggregator | Synthesizes competing arguments and surfaces uncertainty. |
+
 Question -> independent proposals -> critique of alternatives -> bounded vote -> deterministic winner -> synthesis and reported consensus.
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for components, state, failure behavior, and operations.
