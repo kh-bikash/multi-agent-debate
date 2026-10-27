@@ -30,6 +30,7 @@ class Debate:
         for name, llm in self.agents.items():
             alternatives = {other: proposal for other, proposal in proposals.items() if other != name}
             critiques[name] = llm.complete([{"role": "system", "content": "Critique these alternatives for factual or reasoning gaps. Do not introduce new claims without support."}, {"role": "user", "content": json.dumps(alternatives)}])
+        for name, llm in self.agents.items():
             raw_vote = llm.complete([{"role": "system", "content": "Vote for one proposal. Return only its agent name. Candidates: " + ", ".join(sorted(proposals))}, {"role": "user", "content": json.dumps({"proposals": proposals, "critiques": critiques})}]).strip()
             votes[name] = raw_vote if raw_vote in proposals else name
         counts = {name: sum(v == name for v in votes.values()) for name in proposals}
