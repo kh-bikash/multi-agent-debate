@@ -37,7 +37,7 @@ The LLM adapter times out after 30 seconds and retries transient HTTP failures t
 
 ## Deliberation stages
 
-The orchestrator requires at least two agents. It runs proposals concurrently, then critiques concurrently with each critic seeing the other proposals. Once all critiques are available, every agent votes for one registered name; malformed votes fall back to self votes. The winner is chosen by count with a deterministic name tie break. `consensus_threshold` controls whether the result claims agreement.
+The orchestrator requires at least two agents. It runs proposals concurrently, then critiques concurrently with each critic seeing the other proposals. Each critique includes a named vote on its last line; malformed votes fall back to self votes. The winner is chosen by count with a deterministic name tie break. `consensus_threshold` controls whether the result claims agreement.
 
 The synthesizer receives the question, proposals, critiques, votes, winner, and consensus flag. Its output is accompanied by a numeric confidence derived from vote share, and split votes are capped at low confidence. Vote share measures agreement only. It does not prove factual accuracy, so attach an independent evidence check for high stakes decisions.
 

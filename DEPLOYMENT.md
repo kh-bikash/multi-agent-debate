@@ -2,7 +2,7 @@
 
 ## Hosted Vercel application
 
-Connect this Vercel project to the shared Supabase integration for `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` (or `SUPABASE_ANON_KEY`). Configure `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and `OPENAI_MODEL` as server-side Vercel environment variables. Deploy with `vercel deploy --prod`. The hosted app verifies the Supabase user token, uses Secure HttpOnly cookies and same-origin checks, and makes seven model requests per debate for two participants. A free model tier can be exhausted quickly. Set per-user quotas and capacity before unrestricted public use.
+Connect this Vercel project to the shared Supabase integration for `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` (or `SUPABASE_ANON_KEY`). Configure `OPENAI_API_KEY`, `OPENAI_BASE_URL`, and `OPENAI_MODEL` as server-side Vercel environment variables. Deploy with `vercel deploy --prod`. The hosted app verifies the Supabase user token, uses Secure HttpOnly cookies and same-origin checks, and makes five model requests per debate for two participants. A free model tier can be exhausted quickly. Set per-user quotas and capacity before unrestricted public use.
 
 Run `scripts/smoke_hosted.py` from a trusted machine with `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, and `HOSTED_URL` in its process environment. The script creates then deletes its temporary user and checks the live model path.
 

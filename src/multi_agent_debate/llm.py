@@ -25,6 +25,7 @@ class OpenAICompatibleLLM:
     default_model: str = "gpt-4.1-mini"
     timeout_seconds: float = 30
     retries: int = 2
+    max_completion_tokens: int = 400
 
     @classmethod
     def from_env(cls) -> OpenAICompatibleLLM:
@@ -48,9 +49,17 @@ class OpenAICompatibleLLM:
             raise ValueError(
                 "Model endpoint must use HTTPS (or localhost for development)"
             )
-        payload = json.dumps(
-            {"model": model or self.default_model, "messages": messages}
-        ).encode()
+        selected_model = model or self.default_model
+        body = {
+            "model": selected_model,
+            "messages": messages,
+            "max_completion_tokens": self.max_completion_tokens,
+        }
+        if parsed.hostname == "api.groq.com" and selected_model.startswith(
+            "openai/gpt-oss-"
+        ):
+            body["reasoning_effort"] = "low"
+        payload = json.dumps(body).encode()
         request = Request(
             self.base_url.rstrip("/") + "/chat/completions",
             data=payload,

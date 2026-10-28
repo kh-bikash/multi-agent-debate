@@ -64,7 +64,7 @@ class Debate:
                     [
                         {
                             "role": "system",
-                            "content": f"You are {name}. Critique these alternatives for factual or reasoning gaps. Do not introduce new claims without support.",
+                            "content": f"You are {name}. Briefly critique the alternatives for factual or reasoning gaps. End with a separate line exactly `VOTE: candidate`, where candidate is one of: {', '.join(sorted(proposals))}. Do not introduce unsupported claims.",
                         },
                         {
                             "role": "user",
@@ -80,24 +80,12 @@ class Debate:
                 )
                 for name, llm in self.agents.items()
             }
-            critiques = {name: future.result() for name, future in futures.items()}
-        for name, llm in self.agents.items():
-            raw_vote = llm.complete(
-                [
-                    {
-                        "role": "system",
-                        "content": "Vote for one proposal. Return only its agent name. Candidates: "
-                        + ", ".join(sorted(proposals)),
-                    },
-                    {
-                        "role": "user",
-                        "content": json.dumps(
-                            {"proposals": proposals, "critiques": critiques}
-                        ),
-                    },
-                ]
-            ).strip()
-            votes[name] = raw_vote if raw_vote in proposals else name
+            for name, future in futures.items():
+                response = future.result().strip()
+                critique, marker, raw_vote = response.rpartition("\nVOTE:")
+                candidate = raw_vote.strip() if marker else ""
+                critiques[name] = critique.strip() if marker else response
+                votes[name] = candidate if candidate in proposals else name
         counts = {name: sum(v == name for v in votes.values()) for name in proposals}
         winner = min(counts, key=lambda name: (-counts[name], name))
         consensus = counts[winner] / len(votes)

@@ -8,7 +8,11 @@ class Stub:
 
     def complete(self, messages, *, model=None):
         self.calls += 1
-        return "a" if self.calls == 3 else self.name + " says check the evidence"
+        return (
+            self.name + " says check the evidence\nVOTE: a"
+            if self.calls == 2
+            else self.name + " proposes a solution"
+        )
 
 
 def test_debate_votes_and_synthesis():
@@ -23,7 +27,7 @@ def test_split_vote_reports_no_consensus():
     class SelfVoter(Stub):
         def complete(self, messages, *, model=None):
             self.calls += 1
-            return self.name if self.calls == 3 else "proposal"
+            return "critique\nVOTE: " + self.name if self.calls == 2 else "proposal"
 
     result = Debate(
         {"a": SelfVoter("a"), "b": SelfVoter("b")},
