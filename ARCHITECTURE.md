@@ -8,10 +8,13 @@ Collect independent proposals, cross critiques, votes, and a synthesis with expl
 
 Question -> independent proposals -> critique of alternatives -> bounded vote -> deterministic winner -> synthesis and reported consensus.
 
+Hosted: browser -> Vercel FastAPI -> Supabase Auth verification -> two role-specific agents on the configured model -> cross critique -> votes -> synthesis -> browser response. No debate content is stored server-side.
+
 ## Components
 
 - `src/multi_agent_debate/engine.py`: policy and state transitions for this project.
 - `src/multi_agent_debate/llm.py`: injected model protocol and HTTPS OpenAI-compatible adapter with timeouts and retry for transient transport failures.
+- `app.py`: hosted sign-in, Secure HttpOnly cookies, origin and payload checks, and debate UI.
 - `tests/test_engine.py`: deterministic behavior and failure tests.
 - `.github/workflows/ci.yml`: install and test gate.
 
@@ -19,6 +22,8 @@ Question -> independent proposals -> critique of alternatives -> bounded vote ->
 ## State and failure behavior
 
 Model agreement is not independent factual verification. For higher diversity, configure different providers or prompts for each participant, and evaluate factual claims against external evidence.
+
+The hosted version uses two distinct role prompts with the same configured model unless the host is customized. A split vote sets `consensus_reached` to false. The synthesis remains model generated and must be reviewed before high-stakes use. An upstream provider failure produces a 503 response; no partial result is returned.
 
 The LLM adapter times out after 30 seconds and retries transient HTTP failures twice. Model output is untrusted input and is parsed or validated at the project boundary.
 
@@ -39,3 +44,5 @@ The synthesizer receives the question, proposals, critiques, votes, winner, and 
 ## Product interfaces and trust boundary
 
 The installed console command and local browser call the same product operation in `src/*/__main__.py`; the browser does not replace the engine's validation or state transitions. `src/*/web.py` serves HTML and a JSON action endpoint with a one-megabyte request limit and a per-process CSRF token. It binds to loopback by default. A non-loopback bind requires `AGENT_WEB_TOKEN` of at least 16 characters, checked on every action request. The page never embeds the access token; an operator enters it in the browser. Treat the browser as an operator interface and place TLS plus identity-aware access control in front of any public endpoint. The non-root container is described in `DEPLOYMENT.md`.
+
+The hosted browser verifies a Supabase access token on each debate action. Cookies are Secure, HttpOnly, and SameSite=Lax; mutating requests require the page's origin. The API limits question length to 2,000 characters. The model key remains server-side. Public access still requires a per-user usage budget to protect the provider quota.

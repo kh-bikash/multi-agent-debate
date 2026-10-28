@@ -45,7 +45,7 @@ class Debate:
                     [
                         {
                             "role": "system",
-                            "content": "Propose a concise solution and name its main uncertainty.",
+                            "content": f"You are {name}. Propose a concise solution from this perspective and name its main uncertainty. Distinguish facts from assumptions.",
                         },
                         {"role": "user", "content": question},
                     ],
@@ -64,7 +64,7 @@ class Debate:
                     [
                         {
                             "role": "system",
-                            "content": "Critique these alternatives for factual or reasoning gaps. Do not introduce new claims without support.",
+                            "content": f"You are {name}. Critique these alternatives for factual or reasoning gaps. Do not introduce new claims without support.",
                         },
                         {
                             "role": "user",

@@ -2,6 +2,13 @@
 
 Collect independent proposals, cross critiques, votes, and a synthesis with explicit consensus and confidence.
 
+## Hosted application
+
+The browser at `https://multi-agent-debate-one.vercel.app/` provides email/password accounts and a private debate form. It runs two role-distinct agents (pragmatic architect and critical reviewer) plus a synthesizer using the configured OpenAI-compatible model. The proposals, critiques, votes, synthesis, and consensus score are returned in one response. Hosted debates are stateless and are not saved to the database. Sign-in is verified through Supabase Auth before model calls.
+
+The two roles may share one underlying model on a free provider. This gives distinct prompts and independent calls, but does not make the resulting claims independently verified. Inspect the critiques and sources before making important decisions.
+The current free provider account has returned rate-limit errors during live debates. Treat this URL as a limited pilot until a model plan with enough capacity and per-user quotas are configured.
+
 Proposals and critiques run concurrently. Set `consensus_threshold` to control when the result reports agreement; a split vote is marked as no consensus and synthesized with competing options.
 
 ## Quick start
@@ -33,7 +40,9 @@ from multi_agent_debate.engine import Debate
 from multi_agent_debate.llm import OpenAICompatibleLLM
 
 llm = OpenAICompatibleLLM.from_env()
-result = Debate({"analyst": llm, "critic": llm, "planner": llm}, llm).run("Choose an API pagination strategy")
+result = Debate({"analyst": llm, "critic": llm, "planner": llm}, llm).run(
+    "Choose an API pagination strategy"
+)
 print(result.answer, result.votes, result.consensus)
 ```
 
@@ -51,6 +60,21 @@ flowchart LR
     Synthesis --> Result[Answer, votes, and confidence]
     Consensus -->|Split vote| Disagreement[No consensus flag]
     Disagreement --> Synthesis
+```
+
+Hosted path:
+
+```mermaid
+flowchart LR
+    Browser --> API[FastAPI on Vercel]
+    API --> Auth[Supabase Auth]
+    API --> A[Pragmatic architect]
+    API --> B[Critical reviewer]
+    A --> Critique[Cross critiques]
+    B --> Critique
+    Critique --> Vote[Named votes]
+    Vote --> Synthesis[Model synthesis]
+    Synthesis --> Browser
 ```
 
 | Component | Responsibility |
@@ -74,6 +98,7 @@ Install this as a library in an authenticated application or worker. Supply the 
 ## Verification
 
 `pytest -q` runs deterministic tests. GitHub Actions runs the same suite on pushes and pull requests.
+The hosted smoke test creates a temporary user, signs in, runs a real debate, and deletes the user afterward. See [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## License
 
