@@ -1,15 +1,17 @@
 # Multi Agent Debate
 
-Collect independent proposals, cross critiques, votes, and a synthesis with explicit consensus and confidence.
+## About
 
-## Hosted application
+This app helps you compare possible answers to a hard question. Two agents propose a way forward, critique the alternatives, and vote. A final model then summarizes the strongest option and the remaining disagreements. You can read the proposals and critiques yourself instead of seeing only one polished answer.
 
-The browser at `https://multi-agent-debate-one.vercel.app/` provides email/password accounts and a private debate form. It runs two role-distinct agents (pragmatic architect and critical reviewer) plus a synthesizer using the configured OpenAI-compatible model. The proposals, critiques, votes, synthesis, and consensus score are returned in one response. Hosted debates are stateless and are not saved to the database. Sign-in is verified through Supabase Auth before model calls.
+### What you can do
 
-The two roles may share one underlying model on a free provider. This gives distinct prompts and independent calls, but does not make the resulting claims independently verified. Inspect the critiques and sources before making important decisions.
-The current free provider account has returned rate-limit errors during live debates. Treat this URL as a limited pilot until a model plan with enough capacity and per-user quotas are configured.
+- Ask a question and compare two role-specific proposals.
+- See how each agent critiques the other option and where each vote went.
+- Read a synthesis that reports whether the votes reached consensus.
+- Use the [hosted app](https://multi-agent-debate-one.vercel.app/), CLI, local browser, or Python library.
 
-Proposals and critiques run concurrently. Set `consensus_threshold` to control when the result reports agreement; a split vote is marked as no consensus and synthesized with competing options.
+The hosted app has email and password sign-in and does not save debate content. It is a limited pilot on a free model account, so live debates can hit provider rate limits. The two roles currently use different prompts on the same underlying model. Their agreement is a measure of vote share, not independent proof that the answer is true.
 
 ## Quick start
 
